@@ -1,14 +1,22 @@
 package com.uk.container.docker;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.uk.container.docker.repo.Employee;
+import com.uk.container.docker.repo.EmployeeRepository;
+
 @SpringBootApplication
 @RestController
+@ComponentScan(basePackages = "com.uk")
+@EnableJpaRepositories(basePackages = { "com.uk" })
 public class DockerApplication {
 
 	static Class<?> appClass = DockerApplication.class;
@@ -17,15 +25,17 @@ public class DockerApplication {
 		SpringApplication.run(appClass, args);
 	}
 
+	@Autowired
+	private EmployeeRepository repository;
+
 	/**
 	 * @param id:@PathVariable::Annotation   which indicates that a method parameter
-	 *                                       should be bound to a URI
-	 *                                       template variable. Supported for
-	 *                                       RequestMapping annotated handler
-	 *                                       methods. If the method parameter is
-	 *                                       Map<String, String>then the map is
-	 *                                       populated with all path variable names
-	 *                                       and values.
+	 *                                       should be bound to a URI template
+	 *                                       variable. Supported for RequestMapping
+	 *                                       annotated handler methods. If the
+	 *                                       method parameter is Map<String,
+	 *                                       String>then the map is populated with
+	 *                                       all path variable names and values.
 	 * 
 	 * @param name:@RequestParam::Annotation which indicates that a method parameter
 	 *                                       should be bound to a web request
@@ -59,15 +69,22 @@ public class DockerApplication {
 	 * 
 	 * @return
 	 */
-	@GetMapping("docker/access/did/{did}")
-	public String getAccess(@PathVariable(name = "did") String id
-			, @RequestParam(name = "name") String name
-			)
-	{
-		if (id.contains("docker")) {
-			return "Access Granted:"+name;
+	@GetMapping("docker/access/appId/{id}")
+	public String getAccess(@PathVariable(name = "id") String applicationId, @RequestParam(name = "name", required = false) String name) {
+		if (applicationId.contains("docker")) {
+
+			long totalEmployees = repository.count();
+			
+			if (name == null) {
+				return "Access Granted:" + name + "::Total employees:" + totalEmployees;
+			}
+			Employee employee = repository.findByFirstName(name);
+			if(null == employee) {
+				return "Access Granted::No records found";
+			}
+			return "Access Granted::Employees:" + employee.toString();
 		}
-		return "Access Denied:"+name;
+		return "Access Denied:" + name;
 	}
 
 }
