@@ -1,8 +1,17 @@
 DROP TABLE IF EXISTS TBL_EMPLOYEES;
+DROP TABLE IF EXISTS JWT_TOKEN;
   
 CREATE TABLE TBL_EMPLOYEES (
   id INT AUTO_INCREMENT  PRIMARY KEY,
   first_name VARCHAR(250) NOT NULL,
   last_name VARCHAR(250) NOT NULL,
   email VARCHAR(250) DEFAULT NULL
+);
+
+CREATE TABLE JWT_TOKEN (
+	jwt_token VARCHAR(800) NOT NULL,
+	generated_date Date,
+	expiry_date Date,
+	is_expired CHAR,
+	updated_date Date
 );
