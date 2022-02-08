@@ -1,10 +1,13 @@
 pipeline {
-    //agent any
-    agent {
-        docker {image 'spring-boot-docker:2'}
-    }
+    agent any
     stages {
         stage('Build') {
+            agent {
+                docker {
+                    image 'spring-boot-docker:2'
+                    reuseNode true
+                }
+            }
             steps {
                 bat 'set'
                 echo 'Building'
