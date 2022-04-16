@@ -16,7 +16,7 @@
 	<description>Demo project for Spring Boot and docker</description>
 	<properties>
 		<java.version>8</java.version>
-		<sonar.projectKey>hello-docker</sonar.projectKey>
+		<sonar.projectKey>upchark_hello-docker</sonar.projectKey>
 	</properties>
 	<dependencies>
 		<dependency>
